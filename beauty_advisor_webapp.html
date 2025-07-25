@@ -448,9 +448,31 @@
                 <li><a href="#" onclick="showPage('upload')">진단하기</a></li>
                 <li><a href="#" onclick="showPage('guide')">컬러 가이드</a></li>
                 <li><a href="#" onclick="showPage('about')">팀 소개</a></li>
+                <li><a href="#" onclick="showLoginModal()">로그인</a></li>
+                <li><a href="#" onclick="showSignupModal()">회원가입</a></li>
             </ul>
         </nav>
-
+        <!-- 로그인 모달 -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeLoginModal()">&times;</span>
+                <h3>로그인</h3>
+                <input type="text" placeholder="아이디" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
+                <input type="password" placeholder="비밀번호" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
+                <button class="cta-button" style="width:80%;">로그인</button>
+            </div>
+        </div>
+        <!-- 회원가입 모달 -->
+        <div id="signupModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeSignupModal()">&times;</span>
+                <h3>회원가입</h3>
+                <input type="text" placeholder="아이디" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
+                <input type="password" placeholder="비밀번호" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
+                <input type="email" placeholder="이메일" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
+                <button class="cta-button" style="width:80%;">회원가입</button>
+            </div>
+        </div>
         <!-- 메인 랜딩 페이지 -->
         <div id="home" class="page-section active">
             <div class="hero">
@@ -618,7 +640,20 @@
                 closeWebcam();
             }
         }
-
+        // 로그인 모달
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        // 회원가입 모달
+        function showSignupModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+        function closeSignupModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
         // 파일 선택 처리
         function handleFileSelect(event) {
             const file = event.target.files[0];
