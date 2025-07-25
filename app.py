@@ -1,9 +1,8 @@
-
-
 import os
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 import time
+from db import get_db_connection
 
 # Flask 앱 초기화
 app = Flask(__name__, static_folder='', template_folder='')
@@ -63,6 +62,30 @@ def analyze():
 
     return jsonify({'error': 'File type not allowed'}), 400
 
+#store user's data in database
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+    email = data['email']
+    sex = data['sex']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO users (username, password, email, sex) VALUES (%s, %s, %s, %s)",
+            (username, password, email, sex)
+        )
+        conn.commit()
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 400
+    finally:
+        cursor.close()
+        conn.close()
 # 업로드된 이미지를 제공하기 위한 라우트
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
