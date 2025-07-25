@@ -457,6 +457,7 @@
             <div class="modal-content">
                 <span class="close-button" onclick="closeLoginModal()">&times;</span>
                 <h3>로그인</h3>
+                <br>
                 <input type="text" placeholder="아이디" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
                 <input type="password" placeholder="비밀번호" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
                 <button class="cta-button" style="width:80%;">로그인</button>
@@ -467,10 +468,21 @@
             <div class="modal-content">
                 <span class="close-button" onclick="closeSignupModal()">&times;</span>
                 <h3>회원가입</h3>
+                <br>
                 <input type="text" placeholder="아이디" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
                 <input type="password" placeholder="비밀번호" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
                 <input type="email" placeholder="이메일" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
-                <button class="cta-button" style="width:80%;">회원가입</button>
+                <div style="margin-bottom:1rem; width:80%; text-align:left; margin:auto;">
+                    <span style="margin-right:1rem;">성별:</span>
+                    <label>
+                        <input type="radio" name="sex" value="male" style="margin-right:0.5rem;"> 남성
+                    </label>
+                    <label style="margin-left:1rem;">
+                        <input type="radio" name="sex" value="female" style="margin-right:0.5rem;"> 여성
+                    </label>
+                </div>
+                <br>
+                <button class="cta-button" style="width:80%;" onclick="signupUser()">회원가입</button>
             </div>
         </div>
         <!-- 메인 랜딩 페이지 -->
@@ -640,6 +652,7 @@
                 closeWebcam();
             }
         }
+        
         // 로그인 모달
         function showLoginModal() {
             document.getElementById('loginModal').style.display = 'block';
@@ -647,6 +660,7 @@
         function closeLoginModal() {
             document.getElementById('loginModal').style.display = 'none';
         }
+        
         // 회원가입 모달
         function showSignupModal() {
             document.getElementById('signupModal').style.display = 'block';
@@ -654,6 +668,36 @@
         function closeSignupModal() {
             document.getElementById('signupModal').style.display = 'none';
         }
+        function signupUser() {
+            const username = document.querySelector('#signupModal input[placeholder="아이디"]').value;
+            const password = document.querySelector('#signupModal input[placeholder="비밀번호"]').value;
+            const email = document.querySelector('#signupModal input[placeholder="이메일"]').value;
+            const sex = document.querySelector('#signupModal input[name="sex"]:checked')?.value;
+        
+            if (!username || !password || !email || !sex) {
+                alert('모든 정보를 입력해주세요!');
+                return;
+            }
+        
+            fetch('/signup', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password, email, sex})
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('회원가입 성공!');
+                    closeSignupModal();
+                } else {
+                    alert('회원가입 실패!');
+                }
+            })
+            .catch(error => {
+                console.error('Signup error:', error);
+                alert('오류가 발생했습니다.');
+            });
+        }
+        
         // 파일 선택 처리
         function handleFileSelect(event) {
             const file = event.target.files[0];
