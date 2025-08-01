@@ -75,7 +75,7 @@ def signup():
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "INSERT INTO users (username, password, email, sex) VALUES (%s, %s, %s, %s)",
+            "INSERT INTO users (username, email, password,  sex) VALUES (%s, %s, %s, %s)",
             (username, password, email, sex)
         )
         conn.commit()
