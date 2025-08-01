@@ -76,7 +76,7 @@ def signup():
     try:
         cursor.execute(
             "INSERT INTO users (username, email, password,  sex) VALUES (%s, %s, %s, %s)",
-            (username, password, email, sex)
+            (username, email, password, sex)
         )
         conn.commit()
         return jsonify({'status': 'success'})
