@@ -682,7 +682,7 @@
             fetch('/signup', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username, password, email, sex})
+                body: JSON.stringify({username, email, password, sex})
             })
             .then(response => {
                 if (response.ok) {
