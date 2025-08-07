@@ -65,27 +65,65 @@ def analyze():
 #store user's data in database
 @app.route('/signup', methods=['POST'])
 def signup():
-    data = request.get_json()
-    username = data['username']
-    password = data['password']
-    email = data['email']
-    sex = data['sex']
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({'status': 'error', 'message': 'Invalid or missing JSON'}), 400
+
+    name = data.get('name')
+    password = data.get('password')
+    email = data.get('email')
+    sex = data.get('sex')
+
+    if not name or not password or not email or not sex:
+        return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "INSERT INTO users (username, email, password,  sex) VALUES (%s, %s, %s, %s)",
-            (username, email, password, sex)
+            "INSERT INTO users (name, email, password, sex) VALUES (%s, %s, %s, %s)",
+            (name, email, password, sex)
         )
         conn.commit()
-        return jsonify({'status': 'success'})
+        return jsonify({'status': 'success'}), 200
     except Exception as e:
         conn.rollback()
         return jsonify({'status': 'error', 'message': str(e)}), 400
     finally:
         cursor.close()
         conn.close()
+
+#check username and passowrd when logging in
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({'status': 'error', 'message': 'Invalid JSON'}), 400
+
+    name = data.get('name')
+    password = data.get('password')
+
+    if not name or not password:
+        return jsonify({'status': 'error', 'message': 'Missing fields'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("SELECT * FROM users WHERE name = %s", (name,))
+        user = cursor.fetchone()
+
+        if user and user['password'] == password:
+            return jsonify({'status': 'success'}), 200
+        else:
+            return jsonify({'status': 'error', 'message': 'Invalid name or password'}), 401
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 # 업로드된 이미지를 제공하기 위한 라우트
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -93,4 +131,3 @@ def uploaded_file(filename):
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-# DB를 SQLite, PostgreSQL, Firebase
