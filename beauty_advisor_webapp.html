@@ -460,7 +460,7 @@
                 <br>
                 <input type="text" placeholder="아이디" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
                 <input type="password" placeholder="비밀번호" style="margin-bottom:1rem; width:80%; padding:0.5rem;">
-                <button class="cta-button" style="width:80%;">로그인</button>
+                <button class="cta-button" style="width:80%;" onclick="loginUser()">로그인</button>
             </div>
         </div>
         <!-- 회원가입 모달 -->
@@ -669,12 +669,12 @@
             document.getElementById('signupModal').style.display = 'none';
         }
         function signupUser() {
-            const username = document.querySelector('#signupModal input[placeholder="아이디"]').value;
+            const name = document.querySelector('#signupModal input[placeholder="아이디"]').value;
             const password = document.querySelector('#signupModal input[placeholder="비밀번호"]').value;
             const email = document.querySelector('#signupModal input[placeholder="이메일"]').value;
             const sex = document.querySelector('#signupModal input[name="sex"]:checked')?.value;
         
-            if (!username || !password || !email || !sex) {
+            if (!name || !password || !email || !sex) {
                 alert('모든 정보를 입력해주세요!');
                 return;
             }
@@ -682,7 +682,7 @@
             fetch('/signup', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username, email, password, sex})
+                body: JSON.stringify({name, email, password, sex})
             })
             .then(response => {
                 if (response.ok) {
@@ -697,6 +697,36 @@
                 alert('오류가 발생했습니다.');
             });
         }
+
+        function loginUser() {
+            const name = document.querySelector('#loginModal input[placeholder="아이디"]').value;
+            const password = document.querySelector('#loginModal input[placeholder="비밀번호"]').value;
+
+            if (!name || !password) {
+                alert("아이디와 비밀번호를 입력해주세요.");
+                return;
+            }
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('로그인 성공!');
+                    closeLoginModal();
+                } else {
+                    alert('로그인 실패: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Login error:', err);
+                alert('오류가 발생했습니다.');
+            });
+        }
+
         
         // 파일 선택 처리
         function handleFileSelect(event) {
